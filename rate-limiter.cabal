@@ -85,7 +85,8 @@ executable rate-limiter
     build-depends:    base ^>=4.20.2.0,
                       rate-limiter,
                       text,
-                      time
+                      time,
+                      async
 
     -- Directories containing source files.
     hs-source-dirs:   app
