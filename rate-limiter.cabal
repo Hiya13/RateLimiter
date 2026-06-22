@@ -60,6 +60,7 @@ library
     exposed-modules:  RateLimiter.Types,
                       RateLimiter.Algorithm.FixedWindow,
                       RateLimiter.Algorithm.TokenBucket,
+                      RateLimiter.Algorithm.SlidingWindow,
                       RateLimiter.Store
     build-depends:    base ^>=4.20.2.0,
                       stm,

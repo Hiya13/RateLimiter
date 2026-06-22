@@ -4,6 +4,7 @@ module RateLimiter.Types
   , RateLimitConfig (..)
   , FixedWindowState (..)
   , TokenBucketState (..)
+  , SlidingWindowState (..)
   ) where
 
 import Data.Text (Text)
@@ -19,21 +20,25 @@ data Decision = Allowed | Denied
 
 -- | Configuration for a rate limiter.
 data RateLimitConfig = RateLimitConfig
-  { rlcCapacity   :: Int     -- ^ max tokens / requests allowed
-  , rlcRefillRate :: Double  -- ^ tokens added per second (token bucket)
-  , rlcWindowSize :: Int     -- ^ window length in seconds (fixed/sliding window)
+  { rlcCapacity   :: Int
+  , rlcRefillRate :: Double
+  , rlcWindowSize :: Int
   } deriving (Eq, Show)
 
--- | State for the Fixed Window algorithm: when the current window
--- started, and how many requests have been counted in it so far.
+-- | State for the Fixed Window algorithm.
 data FixedWindowState = FixedWindowState
   { fwsWindowStart :: UTCTime
   , fwsCount       :: Int
   } deriving (Eq, Show)
 
--- | State for the Token Bucket algorithm: how many tokens are
--- currently in the bucket, and when we last refilled it.
+-- | State for the Token Bucket algorithm.
 data TokenBucketState = TokenBucketState
   { tbsTokens     :: Double
   , tbsLastRefill :: UTCTime
+  } deriving (Eq, Show)
+
+-- | State for the Sliding Window (log-based) algorithm: a list of
+-- timestamps of recent requests within the window.
+newtype SlidingWindowState = SlidingWindowState
+  { swsTimestamps :: [UTCTime]
   } deriving (Eq, Show)
