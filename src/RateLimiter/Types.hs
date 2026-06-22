@@ -3,6 +3,7 @@ module RateLimiter.Types
   , Decision (..)
   , RateLimitConfig (..)
   , FixedWindowState (..)
+  , TokenBucketState (..)
   ) where
 
 import Data.Text (Text)
@@ -28,4 +29,11 @@ data RateLimitConfig = RateLimitConfig
 data FixedWindowState = FixedWindowState
   { fwsWindowStart :: UTCTime
   , fwsCount       :: Int
+  } deriving (Eq, Show)
+
+-- | State for the Token Bucket algorithm: how many tokens are
+-- currently in the bucket, and when we last refilled it.
+data TokenBucketState = TokenBucketState
+  { tbsTokens     :: Double
+  , tbsLastRefill :: UTCTime
   } deriving (Eq, Show)

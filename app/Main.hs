@@ -17,7 +17,7 @@ main = do
         , rlcRefillRate = 0
         , rlcWindowSize = 10
         }
-      numConcurrentRequests = 50
+      numConcurrentRequests = 50 :: Int
 
   -- Fire 50 requests at the SAME user, all at once, from 50 threads.
   decisions <- mapConcurrently
