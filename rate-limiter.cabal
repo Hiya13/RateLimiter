@@ -57,7 +57,9 @@ common warnings
 library
     import:           warnings
     hs-source-dirs:   src
-    exposed-modules:  RateLimiter.Types
+    exposed-modules:  RateLimiter.Types,
+                      RateLimiter.Algorithm.FixedWindow,
+                      RateLimiter.Store
     build-depends:    base ^>=4.20.2.0,
                       stm,
                       containers,
@@ -82,7 +84,8 @@ executable rate-limiter
     -- Other library packages from which modules are imported.
     build-depends:    base ^>=4.20.2.0,
                       rate-limiter,
-                      text
+                      text,
+                      time
 
     -- Directories containing source files.
     hs-source-dirs:   app
