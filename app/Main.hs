@@ -1,37 +1,21 @@
 module Main where
 
-import Control.Concurrent.Async (mapConcurrently)
-import Data.Time (getCurrentTime)
-import qualified Data.Text as T
+import Network.Wai.Handler.Warp (run)
+import Servant
 
 import RateLimiter.Types
-import RateLimiter.Store
-import RateLimiter.Algorithm.FixedWindow (checkFixedWindow)
+import RateLimiter.AppContext
+import RateLimiter.Api (API, server)
 
 main :: IO ()
 main = do
-  store <- newStore
-  let uid = UserId (T.pack "user123")
-      cfg = RateLimitConfig
-        { rlcCapacity   = 3
-        , rlcRefillRate = 0
-        , rlcWindowSize = 10
+  let defaultConfig = RateLimitConfig
+        { rlcCapacity   = 5
+        , rlcRefillRate = 1.0   -- 1 token per second, for token bucket
+        , rlcWindowSize = 10    -- 10 second window, for fixed/sliding window
         }
-      numConcurrentRequests = 50 :: Int
 
-  -- Fire 50 requests at the SAME user, all at once, from 50 threads.
-  decisions <- mapConcurrently
-    (const $ do
-      now <- getCurrentTime
-      checkAndUpdate store uid (\maybeState -> checkFixedWindow cfg maybeState now))
-    [1 .. numConcurrentRequests]
+  ctx <- newAppContext defaultConfig
 
-  let allowedCount = length (filter (== Allowed) decisions)
-      deniedCount  = length (filter (== Denied) decisions)
-
-  putStrLn $ "Allowed: " ++ show allowedCount
-  putStrLn $ "Denied:  " ++ show deniedCount
-
-  if allowedCount > rlcCapacity cfg
-    then putStrLn "BUG: allowed more requests than capacity!"
-    else putStrLn "OK: never exceeded capacity, even under concurrency."
+  putStrLn "Rate limiter API running on http://localhost:8080"
+  run 8080 (serve (Proxy :: Proxy API) (server ctx))

@@ -62,7 +62,8 @@ library
                       RateLimiter.Algorithm.TokenBucket,
                       RateLimiter.Algorithm.SlidingWindow,
                       RateLimiter.Store,
-                      RateLimiter.AppContext
+                      RateLimiter.AppContext,
+                      RateLimiter.Api
     build-depends:    base ^>=4.20.2.0,
                       stm,
                       containers,
@@ -90,9 +91,8 @@ executable rate-limiter
     -- Other library packages from which modules are imported.
     build-depends:    base ^>=4.20.2.0,
                       rate-limiter,
-                      text,
-                      time,
-                      async
+                      warp,
+                      servant-server
 
     -- Directories containing source files.
     hs-source-dirs:   app
